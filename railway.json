@@ -1,0 +1,13 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "watchPatterns": ["apps/web/**"],
+    "buildCommand": "cd apps/web && npm install && npx prisma generate && npx prisma db push && npm run build"
+  },
+  "deploy": {
+    "startCommand": "cd apps/web && npm run start",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  }
+}
