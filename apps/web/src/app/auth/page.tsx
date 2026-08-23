@@ -10,16 +10,42 @@ import Link from "next/link"
 export default function AuthPage() {
   const router = useRouter()
   const [mode, setMode] = useState<"login" | "register">("login")
+  const [verificationMode, setVerificationMode] = useState(false)
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const [form, setForm] = useState({ email: "", password: "", username: "" })
+  const [form, setForm] = useState({ email: "", password: "", username: "", code: "" })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (mode === "register" && !verificationMode) {
+      // Password constraints
+      const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/
+      if (!passwordRegex.test(form.password)) {
+        toast.error("Пароль має містити мін. 8 символів, 1 велику літеру та 1 цифру")
+        return
+      }
+      
+      setLoading(true)
+      // Mock sending email
+      await new Promise(r => setTimeout(r, 1000))
+      setLoading(false)
+      setVerificationMode(true)
+      toast.success("Код підтвердження відправлено на пошту (тестовий код: 123456)")
+      return
+    }
+
+    if (verificationMode) {
+      if (form.code !== "123456") {
+        toast.error("Невірний код підтвердження")
+        return
+      }
+    }
+
     setLoading(true)
     try {
       await new Promise(r => setTimeout(r, 1000))
-      toast.success(mode === "login" ? "Ви увійшли" : "Акаунт створено")
+      toast.success(mode === "login" ? "Ви увійшли" : "Пошту підтверджено! Акаунт створено")
       router.push("/dashboard")
     } catch {
       toast.error("Помилка")
@@ -61,52 +87,71 @@ export default function AuthPage() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            {mode === "register" && (
-              <div className="space-y-1.5">
-                <label className="text-xs text-neutral-400">Ім'я користувача</label>
+            {!verificationMode ? (
+              <>
+                {mode === "register" && (
+                  <div className="space-y-1.5 animate-in fade-in slide-in-from-top-2">
+                    <label className="text-xs text-neutral-400">Ім'я користувача</label>
+                    <Input
+                      placeholder="username"
+                      value={form.username}
+                      onChange={e => setForm({ ...form, username: e.target.value })}
+                      className="h-11 bg-white/[0.03] border-white/[0.08] rounded-xl placeholder:text-neutral-600 focus:border-orange-500/50"
+                      required
+                    />
+                  </div>
+                )}
+
+                <div className="space-y-1.5">
+                  <label className="text-xs text-neutral-400">Email</label>
+                  <Input
+                    type="email"
+                    placeholder="name@example.com"
+                    value={form.email}
+                    onChange={e => setForm({ ...form, email: e.target.value })}
+                    className="h-11 bg-white/[0.03] border-white/[0.08] rounded-xl placeholder:text-neutral-600 focus:border-orange-500/50"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs text-neutral-400">Пароль</label>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={form.password}
+                      onChange={e => setForm({ ...form, password: e.target.value })}
+                      className="h-11 bg-white/[0.03] border-white/[0.08] rounded-xl placeholder:text-neutral-600 focus:border-orange-500/50 pr-10"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-600 hover:text-neutral-400"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  {mode === "register" && (
+                    <p className="text-[10px] text-neutral-500 mt-1">Мін. 8 символів, 1 велика літера, 1 цифра.</p>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="space-y-1.5 animate-in fade-in slide-in-from-right-4">
+                <label className="text-xs text-neutral-400">Код підтвердження з пошти</label>
                 <Input
-                  placeholder="username"
-                  value={form.username}
-                  onChange={e => setForm({ ...form, username: e.target.value })}
-                  className="h-11 bg-white/[0.03] border-white/[0.08] rounded-xl placeholder:text-neutral-600 focus:border-orange-500/50"
+                  type="text"
+                  placeholder="123456"
+                  value={form.code}
+                  onChange={e => setForm({ ...form, code: e.target.value })}
+                  className="h-11 bg-white/[0.03] border-white/[0.08] rounded-xl placeholder:text-neutral-600 focus:border-orange-500/50 text-center tracking-[0.5em] font-mono text-lg"
                   required
+                  maxLength={6}
                 />
               </div>
             )}
-
-            <div className="space-y-1.5">
-              <label className="text-xs text-neutral-400">Email</label>
-              <Input
-                type="email"
-                placeholder="name@example.com"
-                value={form.email}
-                onChange={e => setForm({ ...form, email: e.target.value })}
-                className="h-11 bg-white/[0.03] border-white/[0.08] rounded-xl placeholder:text-neutral-600 focus:border-orange-500/50"
-                required
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs text-neutral-400">Пароль</label>
-              <div className="relative">
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={form.password}
-                  onChange={e => setForm({ ...form, password: e.target.value })}
-                  className="h-11 bg-white/[0.03] border-white/[0.08] rounded-xl placeholder:text-neutral-600 focus:border-orange-500/50 pr-10"
-                  required
-                  minLength={6}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-600 hover:text-neutral-400"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
 
             <button
               type="submit"
@@ -114,19 +159,21 @@ export default function AuthPage() {
               className="w-full flex items-center justify-center gap-2 h-11 bg-orange-500 hover:bg-orange-400 text-black text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 mt-2"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              {mode === "login" ? "Увійти" : "Зареєструватися"}
+              {verificationMode ? "Підтвердити" : mode === "login" ? "Увійти" : "Зареєструватися"}
             </button>
           </form>
 
-          <p className="text-center text-sm text-neutral-500 mt-8">
-            {mode === "login" ? "Немає акаунту?" : "Вже є акаунт?"}{" "}
-            <button
-              onClick={() => setMode(mode === "login" ? "register" : "login")}
-              className="text-orange-400 hover:text-orange-300 font-medium"
-            >
-              {mode === "login" ? "Зареєструватися" : "Увійти"}
-            </button>
-          </p>
+          {!verificationMode && (
+            <p className="text-center text-sm text-neutral-500 mt-8">
+              {mode === "login" ? "Немає акаунту?" : "Вже є акаунт?"}{" "}
+              <button
+                onClick={() => setMode(mode === "login" ? "register" : "login")}
+                className="text-orange-400 hover:text-orange-300 font-medium"
+              >
+                {mode === "login" ? "Зареєструватися" : "Увійти"}
+              </button>
+            </p>
+          )}
 
           {/* Guest */}
           <div className="mt-10 pt-8 border-t border-white/[0.04] text-center">

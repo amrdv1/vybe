@@ -55,13 +55,13 @@ export default function Home() {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 text-center max-w-3xl">
-          <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.25em] text-neutral-500 mb-10 border border-white/[0.06] rounded-full px-4 py-2">
+        <div className="relative z-10 text-center max-w-3xl animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.25em] text-neutral-500 mb-10 border border-white/[0.06] rounded-full px-4 py-2 hover:bg-white/[0.02] transition-colors cursor-default">
             <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
             Музичні батли в реальному часі
           </div>
 
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-[-0.035em] leading-[0.85] mb-8">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-[-0.035em] leading-[0.85] mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both">
             Обери
             <br />
             <span className="bg-gradient-to-r from-orange-400 via-amber-300 to-orange-400 bg-clip-text text-transparent">найкращу</span>
@@ -69,11 +69,11 @@ export default function Home() {
             пісню
           </h1>
 
-          <p className="text-neutral-400 text-base md:text-lg max-w-md mx-auto mb-12 leading-relaxed font-light">
+          <p className="text-neutral-400 text-base md:text-lg max-w-md mx-auto mb-12 leading-relaxed font-light animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
             Створи турнір, запроси друзів, надсилай пісні та голосуй у реальному часі
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 fill-mode-both">
             <Link href="/create">
               <button className="group flex items-center gap-2.5 bg-orange-500 hover:bg-orange-400 text-black text-sm font-semibold px-8 py-3.5 rounded-full transition-all hover:shadow-[0_0_30px_rgba(249,115,22,0.25)]">
                 Створити батл

@@ -148,12 +148,12 @@ export default function CreateBattlePage() {
                   <div className="space-y-2.5">
                     <Label className="text-xs text-neutral-400 uppercase tracking-wider">Пісень</Label>
                     <Select value={formData.maxSongs} onValueChange={v => setFormData({ ...formData, maxSongs: v || "16" })}>
-                      <SelectTrigger className="h-12 bg-white/[0.03] border-white/[0.08] rounded-xl">
+                      <SelectTrigger className="h-12 bg-white/[0.03] border-white/[0.08] rounded-xl focus:ring-1 focus:ring-orange-500/50">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-neutral-900 border-white/[0.08] rounded-xl">
-                        {[["4", "4"], ["8", "8"], ["16", "16"], ["32", "32"], ["64", "64"]].map(([v, l]) => (
-                          <SelectItem key={v} value={v}>{l}</SelectItem>
+                      <SelectContent className="bg-[#0a0a0a] border border-white/[0.08] rounded-xl z-50 text-white shadow-xl shadow-black/50">
+                        {[["4", "4"], ["8", "8"], ["16", "16"], ["32", "32"], ["64", "64"], ["128", "128"]].map(([v, l]) => (
+                          <SelectItem key={v} value={v} className="focus:bg-white/[0.06] focus:text-white cursor-pointer rounded-lg">{l}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -161,12 +161,12 @@ export default function CreateBattlePage() {
                   <div className="space-y-2.5">
                     <Label className="text-xs text-neutral-400 uppercase tracking-wider">На учасника</Label>
                     <Select value={formData.songsPerPlayer} onValueChange={v => setFormData({ ...formData, songsPerPlayer: v || "2" })}>
-                      <SelectTrigger className="h-12 bg-white/[0.03] border-white/[0.08] rounded-xl">
+                      <SelectTrigger className="h-12 bg-white/[0.03] border-white/[0.08] rounded-xl focus:ring-1 focus:ring-orange-500/50">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-neutral-900 border-white/[0.08] rounded-xl">
-                        {["1", "2", "3", "5"].map(v => (
-                          <SelectItem key={v} value={v}>{v}</SelectItem>
+                      <SelectContent className="bg-[#0a0a0a] border border-white/[0.08] rounded-xl z-50 text-white shadow-xl shadow-black/50">
+                        {["1", "2", "3", "4", "5", "10"].map(v => (
+                          <SelectItem key={v} value={v} className="focus:bg-white/[0.06] focus:text-white cursor-pointer rounded-lg">{v}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -196,13 +196,13 @@ export default function CreateBattlePage() {
                 <div className="space-y-2.5">
                   <Label className="text-xs text-neutral-400 uppercase tracking-wider">Голосування</Label>
                   <Select value={formData.votingMode} onValueChange={v => setFormData({ ...formData, votingMode: v || "COMMUNITY" })}>
-                    <SelectTrigger className="h-12 bg-white/[0.03] border-white/[0.08] rounded-xl">
+                    <SelectTrigger className="h-12 bg-white/[0.03] border-white/[0.08] rounded-xl focus:ring-1 focus:ring-orange-500/50">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-neutral-900 border-white/[0.08] rounded-xl">
-                      <SelectItem value="COMMUNITY">Голосування спільноти</SelectItem>
-                      <SelectItem value="HOST_DECIDES">Хост вирішує</SelectItem>
-                      <SelectItem value="RANDOM">Випадково</SelectItem>
+                    <SelectContent className="bg-[#0a0a0a] border border-white/[0.08] rounded-xl z-50 text-white shadow-xl shadow-black/50">
+                      <SelectItem value="COMMUNITY" className="focus:bg-white/[0.06] focus:text-white cursor-pointer rounded-lg">Голосування спільноти</SelectItem>
+                      <SelectItem value="HOST_DECIDES" className="focus:bg-white/[0.06] focus:text-white cursor-pointer rounded-lg">Хост вирішує</SelectItem>
+                      <SelectItem value="RANDOM" className="focus:bg-white/[0.06] focus:text-white cursor-pointer rounded-lg">Випадково</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
