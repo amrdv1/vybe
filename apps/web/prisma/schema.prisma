@@ -1,0 +1,206 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  username      String?   @unique
+  displayName   String?
+  avatar        String?
+  email         String?   @unique
+  twitchId      String?   @unique
+  discordId     String?   @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  battlesHosted Battle[]  @relation("HostRelation")
+  participations Participant[]
+}
+
+model Battle {
+  id             String    @id @default(cuid())
+  code           String    @unique
+  title          String
+  description    String?
+  theme          String?
+  status         BattleStatus @default(LOBBY)
+  hostId         String
+  maxSongs       Int
+  songsPerPlayer Int
+  votingMode     VotingMode @default(COMMUNITY)
+  roundDuration  Int       @default(60) // seconds
+  requireAuth    Boolean   @default(false)
+  
+  createdAt      DateTime  @default(now())
+  startedAt      DateTime?
+  finishedAt     DateTime?
+  
+  host           User      @relation("HostRelation", fields: [hostId], references: [id])
+  participants   Participant[]
+  songs          Song[]
+  rounds         BattleRound[]
+  settings       BattleSettings?
+  messages       BattleMessage[]
+}
+
+enum BattleStatus {
+  LOBBY
+  SUBMISSION
+  READY
+  STARTING
+  ROUND_ACTIVE
+  VOTING
+  ROUND_FINISHED
+  SEMIFINAL
+  FINAL
+  FINISHED
+  CANCELLED
+}
+
+enum VotingMode {
+  HOST_DECIDES
+  COMMUNITY
+  RANDOM
+}
+
+model Participant {
+  id          String   @id @default(cuid())
+  battleId    String
+  userId      String?  // Nullable for Guests
+  guestName   String?
+  guestSessionId String?
+  joinedAt    DateTime @default(now())
+  isModerator Boolean  @default(false)
+  isHost      Boolean  @default(false)
+
+  battle      Battle   @relation(fields: [battleId], references: [id])
+  user        User?    @relation(fields: [userId], references: [id])
+  songs       Song[]
+  votes       Vote[]
+}
+
+model Song {
+  id            String   @id @default(cuid())
+  battleId      String
+  participantId String
+  title         String
+  artist        String
+  album         String?
+  coverUrl      String?
+  source        String   // e.g., SPOTIFY, YOUTUBE
+  sourceUrl     String
+  sourceId      String
+  duration      Int?     // seconds
+  submittedAt   DateTime @default(now())
+  status        SongStatus @default(PENDING)
+  isWinner      Boolean  @default(false)
+
+  battle        Battle   @relation(fields: [battleId], references: [id])
+  participant   Participant @relation(fields: [participantId], references: [id])
+  matchesAsA    Match[]  @relation("SongARelation")
+  matchesAsB    Match[]  @relation("SongBRelation")
+  matchesWon    Match[]  @relation("MatchWinnerRelation")
+}
+
+enum SongStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  DISQUALIFIED
+}
+
+model BattleRound {
+  id          String   @id @default(cuid())
+  battleId    String
+  roundNumber Int
+  name        String   // e.g., "Round of 16", "Quarterfinal"
+  status      RoundStatus @default(PENDING)
+  startedAt   DateTime?
+  finishedAt  DateTime?
+
+  battle      Battle   @relation(fields: [battleId], references: [id])
+  matches     Match[]
+}
+
+enum RoundStatus {
+  PENDING
+  ACTIVE
+  FINISHED
+}
+
+model Match {
+  id          String   @id @default(cuid())
+  roundId     String
+  position    Int
+  songAId     String?
+  songBId     String?
+  winnerId    String?
+  status      MatchStatus @default(PENDING)
+  votesA      Int      @default(0)
+  votesB      Int      @default(0)
+  startedAt   DateTime?
+  finishedAt  DateTime?
+
+  round       BattleRound @relation(fields: [roundId], references: [id])
+  songA       Song?    @relation("SongARelation", fields: [songAId], references: [id])
+  songB       Song?    @relation("SongBRelation", fields: [songBId], references: [id])
+  winner      Song?    @relation("MatchWinnerRelation", fields: [winnerId], references: [id])
+  votes       Vote[]
+}
+
+enum MatchStatus {
+  PENDING
+  ACTIVE
+  VOTING
+  FINISHED
+}
+
+model Vote {
+  id             String   @id @default(cuid())
+  matchId        String
+  participantId  String?
+  visitorId      String?  // Secure session identifier for guests
+  selectedSongId String
+  createdAt      DateTime @default(now())
+
+  match          Match       @relation(fields: [matchId], references: [id])
+  participant    Participant? @relation(fields: [participantId], references: [id])
+}
+
+model BattleSettings {
+  id                     String  @id @default(cuid())
+  battleId               String  @unique
+  allowSpotify           Boolean @default(true)
+  allowYouTube           Boolean @default(true)
+  allowAppleMusic        Boolean @default(true)
+  allowSoundCloud        Boolean @default(true)
+  allowSuno              Boolean @default(false)
+  allowGuests            Boolean @default(true)
+  requireLogin           Boolean @default(false)
+  allowMultipleSongs     Boolean @default(false)
+  maxSongsPerPlayer      Int     @default(1)
+  enableChatVoting       Boolean @default(false)
+  enableTwitchPoll       Boolean @default(false)
+  revealSubmitter        Boolean @default(true)
+  revealSongsBeforeBattle Boolean @default(true)
+  allowSkip              Boolean @default(true)
+  autoAdvance            Boolean @default(false)
+
+  battle                 Battle  @relation(fields: [battleId], references: [id])
+}
+
+model BattleMessage {
+  id        String   @id @default(cuid())
+  battleId  String
+  userId    String?
+  guestName String?
+  message   String
+  createdAt DateTime @default(now())
+
+  battle    Battle   @relation(fields: [battleId], references: [id])
+}
