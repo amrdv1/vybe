@@ -3,10 +3,10 @@
   "build": {
     "builder": "NIXPACKS",
     "watchPatterns": ["apps/web/**"],
-    "buildCommand": "cd apps/web && npm install && npx prisma generate && npx prisma db push && npm run build"
+    "buildCommand": "cd apps/web && npm install && npx prisma generate && npm run build"
   },
   "deploy": {
-    "startCommand": "cd apps/web && npm run start",
+    "startCommand": "cd apps/web && npx prisma db push --accept-data-loss && npm run start",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
