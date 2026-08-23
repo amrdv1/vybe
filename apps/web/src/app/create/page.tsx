@@ -147,7 +147,7 @@ export default function CreateBattlePage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2.5">
                     <Label className="text-xs text-neutral-400 uppercase tracking-wider">Пісень</Label>
-                    <Select value={formData.maxSongs} onValueChange={v => setFormData({ ...formData, maxSongs: v })}>
+                    <Select value={formData.maxSongs} onValueChange={v => setFormData({ ...formData, maxSongs: v || "16" })}>
                       <SelectTrigger className="h-12 bg-white/[0.03] border-white/[0.08] rounded-xl">
                         <SelectValue />
                       </SelectTrigger>
@@ -160,7 +160,7 @@ export default function CreateBattlePage() {
                   </div>
                   <div className="space-y-2.5">
                     <Label className="text-xs text-neutral-400 uppercase tracking-wider">На учасника</Label>
-                    <Select value={formData.songsPerPlayer} onValueChange={v => setFormData({ ...formData, songsPerPlayer: v })}>
+                    <Select value={formData.songsPerPlayer} onValueChange={v => setFormData({ ...formData, songsPerPlayer: v || "2" })}>
                       <SelectTrigger className="h-12 bg-white/[0.03] border-white/[0.08] rounded-xl">
                         <SelectValue />
                       </SelectTrigger>
@@ -195,7 +195,7 @@ export default function CreateBattlePage() {
               <div className="space-y-8">
                 <div className="space-y-2.5">
                   <Label className="text-xs text-neutral-400 uppercase tracking-wider">Голосування</Label>
-                  <Select value={formData.votingMode} onValueChange={v => setFormData({ ...formData, votingMode: v })}>
+                  <Select value={formData.votingMode} onValueChange={v => setFormData({ ...formData, votingMode: v || "COMMUNITY" })}>
                     <SelectTrigger className="h-12 bg-white/[0.03] border-white/[0.08] rounded-xl">
                       <SelectValue />
                     </SelectTrigger>
